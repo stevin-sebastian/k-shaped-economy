@@ -17,7 +17,7 @@ SERIES_IDS = {
     # Production/Nonsupervisory workers (~80% of private workforce).
     # Avoids the composition bias in sector-specific earnings (e.g. L&H wages
     # spiked in 2020 because the lowest-paid workers were laid off first).
-    "WAGE_LOW_WAGE":   "CES0500000008",   # Prod. & Nonsupervisory Workers Avg Hourly Earnings (Monthly)
+    "WAGE_LOW_WAGE":   "AHETPI",          # Prod. & Nonsupervisory Workers Avg Hourly Earnings (Monthly)
 
     # Prices
     "CPIAUCSL":        "CPIAUCSL",        # CPI All Urban Consumers (Monthly)

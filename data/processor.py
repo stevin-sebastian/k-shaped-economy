@@ -103,13 +103,20 @@ def calculate_k_indices(df_normalized):
                     continue
         return pd.Series(np.nan, index=out.index)
 
+    def _mean_of(*series):
+        """Average only the non-all-NaN series so a missing source doesn't zero-out the composite."""
+        valid = [s for s in series if not s.isna().all()]
+        if not valid:
+            return pd.Series(np.nan, index=out.index)
+        return pd.concat(valid, axis=1).mean(axis=1)
+
     # ── Upper Arm ──────────────────────────────────────────────────────────────
     sp500_idx      = index_series("SP500_RAW",       "SP500")
     home_price_idx = index_series("HOME_PRICES_RAW", "HOME_PRICES")
-    out["K_UPPER"] = (sp500_idx + home_price_idx) / 2
+    out["K_UPPER"] = _mean_of(sp500_idx, home_price_idx)
 
     # ── Lower Arm ──────────────────────────────────────────────────────────────
-    emp_idx          = index_series("EMP_LOW_WAGE_RAW",      "EMP_LOW_WAGE")
+    emp_idx           = index_series("EMP_LOW_WAGE_RAW",     "EMP_LOW_WAGE")
     bottom_wealth_idx = index_series("WEALTH_BOTTOM50_RAW",  "WEALTH_BOTTOM50")
 
     # Prefer CPI-deflated real wages; fall back to nominal
@@ -131,6 +138,6 @@ def calculate_k_indices(df_normalized):
     else:
         inverted = pd.Series(100.0, index=out.index)
 
-    out["K_LOWER"] = (emp_idx + wage_idx + inverted + bottom_wealth_idx) / 4
+    out["K_LOWER"] = _mean_of(emp_idx, wage_idx, inverted, bottom_wealth_idx)
 
     return out
